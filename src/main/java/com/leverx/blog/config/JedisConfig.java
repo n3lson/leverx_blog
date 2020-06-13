@@ -16,7 +16,7 @@ public class JedisConfig {
     @Bean
     public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(jedisConnectionFactory());
+        template.setConnectionFactory(new JedisConnectionFactory());
         template.setValueSerializer(new GenericToStringSerializer<>(Object.class));
         return template;
     }

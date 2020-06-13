@@ -32,7 +32,7 @@ public class JwtProvider {
         return Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token);
     }
 
-    public String createToken(String email) {
+    public String createJwt(String email) {
         Date now = new Date();
         return Jwts.builder()
                    .setClaims(Jwts.claims().setSubject(email))

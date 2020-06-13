@@ -22,14 +22,11 @@ public class JwtFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain) throws IOException, ServletException {
         String token = jwtProvider.getTokenFromRequestHeader((HttpServletRequest) req);
         SecurityContext context = SecurityContextHolder.getContext();
-        if (
-//                context.getAuthentication() == null &&
-                !token.isEmpty() && jwtProvider.tokenIsValid(token)) {
+        if (!token.isEmpty() && jwtProvider.tokenIsValid(token)) {
             context.setAuthentication(auth.getAuthentication(token));
+        } else {
+            context.setAuthentication(null);
         }
-//        else {
-//            context.setAuthentication(null);
-//        }
         filterChain.doFilter(req, res);
     }
 }
