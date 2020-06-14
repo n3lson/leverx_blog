@@ -6,10 +6,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 
 public class JwtUser implements UserDetails {
+    private Integer id;
     private String password;
     private String email;
 
-    public JwtUser(String password, String email) {
+    public JwtUser(Integer id, String password, String email) {
+        this.id = id;
         this.password = password;
         this.email = email;
     }
@@ -17,6 +19,10 @@ public class JwtUser implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     @Override
