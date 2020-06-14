@@ -1,6 +1,6 @@
 package com.leverx.blog.service.impl;
 
-import com.leverx.blog.entity.User;
+import com.leverx.blog.dto.UserDTO;
 import com.leverx.blog.security.JwtUser;
 import com.leverx.blog.service.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,10 +20,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> user = userService.getUserByEmail(email);
+        Optional<UserDTO> user = userService.getUserByEmail(email);
         if (!user.isPresent()) {
             throw new UsernameNotFoundException("User with email " + email + " not found.");
         }
-        return new JwtUser(user.get().getPassword(), user.get().getEmail());
+        return new JwtUser(user.get().getId(), user.get().getPassword(), user.get().getEmail());
     }
 }
