@@ -1,8 +1,8 @@
 package com.leverx.blog.controller;
 
+import com.leverx.blog.dto.UserDTO;
 import com.leverx.blog.entity.EmailTokenResponse;
 import com.leverx.blog.entity.ResetPassword;
-import com.leverx.blog.entity.User;
 import com.leverx.blog.entity.VerificationToken;
 import com.leverx.blog.security.JwtProvider;
 import com.leverx.blog.service.EmailService;
@@ -45,7 +45,7 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody User user) {
+    public ResponseEntity register(@RequestBody UserDTO user) {
         String hashCode = redis.put(user);
         emailService.sendConfirmationEmail(user.getEmail(), CONFIRMATION_EMAIL_SUBJECT, CONFIRM_URL + hashCode);
         return ResponseEntity.ok().build();
@@ -55,7 +55,7 @@ public class AuthController {
     public ResponseEntity<String> confirm(@PathVariable("hash_code") String hashCode) {
         Date expiryDate = (Date) redis.get(hashCode);
         if (expiryDate.compareTo(new Date()) >= 0) {
-            User user = (User) redis.get(new VerificationToken(hashCode, expiryDate));
+            UserDTO user = (UserDTO) redis.get(new VerificationToken(hashCode, expiryDate));
             if (user != null) {
                 userService.save(user);
                 return ResponseEntity.ok("Confirmation succeeded.");
@@ -65,7 +65,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody User user) {
+    public ResponseEntity login(@RequestBody UserDTO user) {
         auth.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
         return ResponseEntity.ok(new EmailTokenResponse(user.getEmail(), jwt.createJwt(user.getEmail())));
     }
@@ -80,7 +80,7 @@ public class AuthController {
     @PostMapping("/reset")
     public ResponseEntity resetPassword(@RequestBody ResetPassword reset) {
         String email = (String) redis.get(reset.getToken());
-        Optional<User> user = userService.getUserByEmail(email);
+        Optional<UserDTO> user = userService.getUserByEmail(email);
         if (user.isPresent()) {
             user.get().setPassword(reset.getNewPassword());
             userService.save(user.get());
